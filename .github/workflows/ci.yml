@@ -54,4 +54,4 @@ jobs:
       - name: Installa workload MAUI iOS
         run: dotnet workload install maui-ios
       - name: Compila per il simulatore iOS
-        run: dotnet build src/AppPhotoImmibili.App -c Debug -p:TargetFrameworks=net10.0-ios
+        run: dotnet build src/AppPhotoImmibili.App -c Debug -p:MobilePlatform=ios

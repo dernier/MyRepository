@@ -4,6 +4,8 @@
     <!-- iOS si compila da macOS (o da Windows con un Mac associato). -->
     <TargetFrameworks>net10.0-android</TargetFrameworks>
     <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('linux'))">$(TargetFrameworks);net10.0-ios</TargetFrameworks>
+    <!-- Una sola piattaforma (es. in CI): dotnet build -p:MobilePlatform=ios -->
+    <TargetFrameworks Condition="'$(MobilePlatform)' != ''">net10.0-$(MobilePlatform)</TargetFrameworks>
     <!-- Solo controllo di compilazione del codice condiviso, senza SDK Android/iOS: dotnet build -p:TypeCheck=true -->
     <TargetFrameworks Condition="'$(TypeCheck)' == 'true'">net10.0</TargetFrameworks>
 
