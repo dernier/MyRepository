@@ -112,6 +112,13 @@ public sealed class PropertyRepository
         return room;
     }
 
+    /// <summary>Rinomina l'ambiente. Le foto già scattate mantengono il nome file originale.</summary>
+    public async Task RenameRoomAsync(int roomId, string name)
+    {
+        await InitAsync();
+        await _db.ExecuteAsync("UPDATE rooms SET Name = ? WHERE Id = ?", name, roomId);
+    }
+
     public async Task DeleteRoomAsync(int roomId)
     {
         await InitAsync();

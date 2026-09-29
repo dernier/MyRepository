@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Test della libreria core
+        run: dotnet test tests/InquadraCasa.Core.Tests --configuration Release
+      - name: Controllo di compilazione dell'app (codice condiviso e XAML)
+        run: dotnet build src/InquadraCasa.App -p:TypeCheck=true --configuration Release
+
+  android:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: microsoft
+          java-version: '21'
+      - name: Installa workload MAUI Android
+        run: dotnet workload install maui-android
+      - name: Compila APK
+        run: dotnet publish src/InquadraCasa.App -f net10.0-android -c Release -p:AndroidPackageFormat=apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inquadracasa-android
+          path: src/InquadraCasa.App/bin/Release/net10.0-android/publish/*-Signed.apk

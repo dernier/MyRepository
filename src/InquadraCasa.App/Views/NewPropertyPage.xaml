@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:InquadraCasa.App.ViewModels"
+             xmlns:cl="clr-namespace:InquadraCasa.Core.Checklist;assembly=InquadraCasa.Core"
+             x:Class="InquadraCasa.App.Views.NewPropertyPage"
+             x:DataType="vm:NewPropertyViewModel"
+             Title="Nuovo immobile">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="6">
+            <Label Text="Riferimento" Style="{StaticResource SectionHeader}" />
+            <Entry Placeholder="Codice immobile (es. RIF-1234)" Text="{Binding Code}" />
+            <Entry Placeholder="Indirizzo" Text="{Binding Address}" />
+            <Entry Placeholder="Comune" Text="{Binding City}" />
+            <Editor Placeholder="Note (facoltative)" Text="{Binding Notes}" AutoSize="TextChanges" />
+
+            <Label Text="Tipologia" Style="{StaticResource SectionHeader}" />
+            <Picker ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}"
+                    ItemDisplayBinding="{Binding Name, x:DataType=cl:PropertyTemplate}" Title="Tipologia di immobile" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Percorso di scatto" FontAttributes="Bold" />
+                    <Label Text="{Binding TemplatePreview}" Style="{StaticResource Muted}" />
+                    <Label Text="Potrai aggiungere o togliere ambienti dalla checklist." Style="{StaticResource Muted}" FontAttributes="Italic" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Crea e inizia" Command="{Binding CreateCommand}" Margin="0,8,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
