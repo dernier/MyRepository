@@ -41,7 +41,7 @@ jobs:
 
   ios:
     # Compilazione per il simulatore: verifica il codice iOS senza certificati di firma.
-    runs-on: macos-15
+    runs-on: macos-26
     needs: test
     steps:
       - uses: actions/checkout@v4
