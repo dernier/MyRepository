@@ -9,8 +9,24 @@ public sealed record LensOption(string Name, double FovDegrees)
     public override string ToString() => Name;
 }
 
-public partial class SettingsViewModel(AppSettings settings, SensorService sensors) : ObservableObject
+public sealed record DistractorModeOption(string Name, DistractorMode Mode)
 {
+    public override string ToString() => Name;
+}
+
+public partial class SettingsViewModel(
+    AppSettings settings,
+    SensorService sensors,
+    OnDeviceModelService onDeviceModel,
+    BackgroundSyncService sync) : ObservableObject
+{
+    public IReadOnlyList<DistractorModeOption> DistractorModes { get; } =
+    [
+        new("Sul telefono e nel cloud", DistractorMode.Entrambi),
+        new("Solo sul telefono (senza rete)", DistractorMode.SulTelefono),
+        new("Solo nel cloud (Claude)", DistractorMode.Cloud),
+    ];
+
     public IReadOnlyList<LensOption> Lenses { get; } =
     [
         new("Grandangolo principale (~26 mm, 69°)", 69),
@@ -31,6 +47,16 @@ public partial class SettingsViewModel(AppSettings settings, SensorService senso
     [ObservableProperty] public partial double HeightMax { get; set; }
     [ObservableProperty] public partial LensOption? SelectedLens { get; set; }
     [ObservableProperty] public partial string CalibrationText { get; set; } = "";
+    [ObservableProperty] public partial DistractorModeOption? SelectedDistractorMode { get; set; }
+    [ObservableProperty] public partial string ModelText { get; set; } = "";
+    [ObservableProperty] public partial bool HasModel { get; set; }
+    [ObservableProperty] public partial bool RefineWithLines { get; set; }
+    [ObservableProperty] public partial string AgentName { get; set; } = "";
+    [ObservableProperty] public partial bool SyncEnabled { get; set; }
+    [ObservableProperty] public partial bool SyncWifiOnly { get; set; }
+    [ObservableProperty] public partial string AgencyBaseUrl { get; set; } = "";
+    [ObservableProperty] public partial string AgencyToken { get; set; } = "";
+    [ObservableProperty] public partial string SyncStatus { get; set; } = "";
 
     public string ToleranceText => $"Tolleranza livella: ±{Tolerance:0.0}°";
     public string HeightText => $"Altezza di scatto: {HeightMin:0}–{HeightMax:0} cm";
@@ -53,6 +79,16 @@ public partial class SettingsViewModel(AppSettings settings, SensorService senso
         HeightMin = settings.HeightMinCm;
         HeightMax = settings.HeightMaxCm;
         SelectedLens = Lenses.MinBy(l => Math.Abs(l.FovDegrees - settings.HorizontalFovDegrees));
+        SelectedDistractorMode = DistractorModes.FirstOrDefault(m => m.Mode == settings.DistractorMode) ?? DistractorModes[0];
+        RefineWithLines = settings.RefineWithLines;
+        AgentName = settings.AgentName;
+        SyncEnabled = settings.SyncEnabled;
+        SyncWifiOnly = settings.SyncWifiOnly;
+        AgencyBaseUrl = settings.AgencyBaseUrl;
+        AgencyToken = await settings.GetAgencyTokenAsync();
+        RefreshModel();
+        await sync.RefreshStatusAsync();
+        SyncStatus = sync.Status;
         CalibrationText = $"Segno {settings.AccelerometerSign:+0;-0}, correzione {settings.PitchOffset:+0.0;-0.0}° / {settings.RollOffset:+0.0;-0.0}°";
     }
 
@@ -71,7 +107,58 @@ public partial class SettingsViewModel(AppSettings settings, SensorService senso
         settings.HeightMinCm = Math.Round(Math.Min(HeightMin, HeightMax));
         settings.HeightMaxCm = Math.Round(Math.Max(HeightMin, HeightMax));
         if (SelectedLens is not null) settings.HorizontalFovDegrees = SelectedLens.FovDegrees;
+        if (SelectedDistractorMode is not null) settings.DistractorMode = SelectedDistractorMode.Mode;
+        settings.RefineWithLines = RefineWithLines;
+        settings.AgentName = AgentName;
+        settings.SyncWifiOnly = SyncWifiOnly;
+        settings.AgencyBaseUrl = AgencyBaseUrl;
+        await settings.SetAgencyTokenAsync(AgencyToken);
+        if (SyncEnabled && !new Core.Sync.AgencyUploaderOptions { BaseUrl = AgencyBaseUrl }.IsConfigured)
+        {
+            SyncEnabled = false;
+            await Shell.Current.DisplayAlertAsync("Caricamento", "Per attivare il caricamento serve un indirizzo che inizi con https://.", "OK");
+        }
+        settings.SyncEnabled = SyncEnabled;
+        sync.Trigger();
         await Shell.Current.DisplayAlertAsync("Impostazioni", "Impostazioni salvate.", "OK");
+    }
+
+    private void RefreshModel()
+    {
+        HasModel = onDeviceModel.IsInstalled;
+        ModelText = onDeviceModel.Description;
+    }
+
+    [RelayCommand]
+    private async Task ImportModelAsync()
+    {
+        try
+        {
+            var message = await onDeviceModel.ImportAsync();
+            if (message is not null) await Shell.Current.DisplayAlertAsync("Modello", message, "OK");
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Modello", ex.Message, "OK");
+        }
+        RefreshModel();
+    }
+
+    [RelayCommand]
+    private async Task RemoveModelAsync()
+    {
+        if (!await Shell.Current.DisplayAlertAsync("Modello", "Rimuovere il modello dal telefono?", "Rimuovi", "Annulla")) return;
+        await onDeviceModel.RemoveAsync();
+        RefreshModel();
+    }
+
+    [RelayCommand]
+    private async Task SyncNowAsync()
+    {
+        SyncStatus = "Caricamento in corso…";
+        await sync.RetryAsync();
+        await sync.RunAsync();
+        SyncStatus = sync.Status;
     }
 
     [RelayCommand]

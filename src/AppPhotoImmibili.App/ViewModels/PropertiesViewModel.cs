@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using AppPhotoImmibili.App.Services;
 using AppPhotoImmibili.Core.Checklist;
 using AppPhotoImmibili.Core.Data;
 using AppPhotoImmibili.Core.Models;
@@ -15,9 +16,23 @@ public sealed record PropertyItem(Property Property, string TemplateName, int Do
     public double Progress => Total == 0 ? 0 : (double)Done / Total;
 }
 
-public partial class PropertiesViewModel(PropertyRepository repository) : ObservableObject
+public partial class PropertiesViewModel : ObservableObject
 {
+    private readonly PropertyRepository repository;
+    private readonly BackgroundSyncService sync;
+
+    public PropertiesViewModel(PropertyRepository repository, BackgroundSyncService sync)
+    {
+        this.repository = repository;
+        this.sync = sync;
+        sync.StatusChanged += (_, _) => MainThread.BeginInvokeOnMainThread(() => SyncText = sync.Status);
+    }
+
     public ObservableCollection<PropertyItem> Items { get; } = [];
+
+    /// <summary>Stato della coda di caricamento sul gestionale (vuoto se disattivato).</summary>
+    [ObservableProperty]
+    public partial string SyncText { get; set; } = "";
 
     [ObservableProperty]
     public partial bool IsEmpty { get; set; }
@@ -41,6 +56,7 @@ public partial class PropertiesViewModel(PropertyRepository repository) : Observ
                     progress.Sum(r => r.Room.RequiredWideShots)));
             }
             IsEmpty = Items.Count == 0;
+            await sync.RefreshStatusAsync();
         }
         finally
         {

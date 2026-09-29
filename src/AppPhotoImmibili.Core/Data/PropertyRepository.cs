@@ -191,6 +191,15 @@ public sealed class PropertyRepository
         return (queued, uploaded, failed);
     }
 
+    /// <summary>Ultimo messaggio di errore del caricamento, se c'è.</summary>
+    public async Task<string?> GetLastSyncErrorAsync()
+    {
+        await InitAsync();
+        var photo = await _db.Table<Photo>().Where(p => p.SyncState != SyncState.Caricata && p.SyncError != "")
+            .OrderByDescending(p => p.Id).FirstOrDefaultAsync();
+        return photo?.SyncError;
+    }
+
     /// <summary>Rimette in coda le foto in errore e annulla le attese (dopo aver corretto le impostazioni).</summary>
     public async Task<int> RetrySyncAsync()
     {

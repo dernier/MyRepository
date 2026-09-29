@@ -1,9 +1,21 @@
 namespace AppPhotoImmibili.App.Services;
 
+/// <summary>Dove eseguire il controllo degli oggetti di disturbo.</summary>
+public enum DistractorMode
+{
+    /// <summary>Solo sul telefono (ONNX Runtime): immediato e senza rete.</summary>
+    SulTelefono,
+    /// <summary>Solo nel cloud (Claude): riconosce anche disordine, tavoletta alzata, riflessi.</summary>
+    Cloud,
+    /// <summary>Prima sul telefono, poi nel cloud quando c'è rete.</summary>
+    Entrambi,
+}
+
 /// <summary>Impostazioni dell'app. La chiave API resta nello storage sicuro del sistema operativo.</summary>
 public sealed class AppSettings
 {
     private const string ApiKeyName = "anthropic_api_key";
+    private const string AgencyTokenName = "agency_token";
 
     public double LevelToleranceDegrees
     {
@@ -54,6 +66,48 @@ public sealed class AppSettings
         set => Preferences.Set(nameof(CheckDistractors), value);
     }
 
+    public DistractorMode DistractorMode
+    {
+        get => (DistractorMode)Preferences.Get(nameof(DistractorMode), (int)DistractorMode.Entrambi);
+        set => Preferences.Set(nameof(DistractorMode), (int)value);
+    }
+
+    public bool UseOnDeviceDetection => CheckDistractors && DistractorMode != DistractorMode.Cloud;
+    public bool UseCloudDetection => CheckDistractors && DistractorMode != DistractorMode.SulTelefono;
+
+    /// <summary>Affina la correzione prospettica con le linee verticali dell'immagine.</summary>
+    public bool RefineWithLines
+    {
+        get => Preferences.Get(nameof(RefineWithLines), true);
+        set => Preferences.Set(nameof(RefineWithLines), value);
+    }
+
+    /// <summary>Nome dell'agente, scritto nell'EXIF (Artist) e inviato al gestionale.</summary>
+    public string AgentName
+    {
+        get => Preferences.Get(nameof(AgentName), "");
+        set => Preferences.Set(nameof(AgentName), value.Trim());
+    }
+
+    // Caricamento sul gestionale dell'agenzia
+    public bool SyncEnabled
+    {
+        get => Preferences.Get(nameof(SyncEnabled), false);
+        set => Preferences.Set(nameof(SyncEnabled), value);
+    }
+
+    public bool SyncWifiOnly
+    {
+        get => Preferences.Get(nameof(SyncWifiOnly), true);
+        set => Preferences.Set(nameof(SyncWifiOnly), value);
+    }
+
+    public string AgencyBaseUrl
+    {
+        get => Preferences.Get(nameof(AgencyBaseUrl), "");
+        set => Preferences.Set(nameof(AgencyBaseUrl), value.Trim());
+    }
+
     public bool ShowCornerMask
     {
         get => Preferences.Get(nameof(ShowCornerMask), true);
@@ -102,5 +156,17 @@ public sealed class AppSettings
     {
         if (string.IsNullOrWhiteSpace(key)) SecureStorage.Default.Remove(ApiKeyName);
         else await SecureStorage.Default.SetAsync(ApiKeyName, key.Trim());
+    }
+
+    public async Task<string> GetAgencyTokenAsync()
+    {
+        try { return await SecureStorage.Default.GetAsync(AgencyTokenName) ?? ""; }
+        catch { return ""; }
+    }
+
+    public async Task SetAgencyTokenAsync(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token)) SecureStorage.Default.Remove(AgencyTokenName);
+        else await SecureStorage.Default.SetAsync(AgencyTokenName, token.Trim());
     }
 }

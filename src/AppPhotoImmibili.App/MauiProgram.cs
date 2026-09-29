@@ -28,6 +28,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<ExportService>();
         builder.Services.AddSingleton<AppSettings>();
         builder.Services.AddSingleton<SensorService>();
+        builder.Services.AddSingleton<OnDeviceModelService>();
+        builder.Services.AddSingleton<BackgroundSyncService>();
         builder.Services.AddSingleton<PhotoService>();
 
         builder.Services.AddTransient<PropertiesViewModel>();

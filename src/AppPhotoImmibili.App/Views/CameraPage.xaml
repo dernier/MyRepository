@@ -95,7 +95,7 @@
             </Grid>
             <HorizontalStackLayout Grid.Row="2" Spacing="8" IsVisible="{Binding IsCheckingAi}">
                 <ActivityIndicator IsRunning="{Binding IsCheckingAi}" Color="White" HeightRequest="20" WidthRequest="20" />
-                <Label Text="Cerco elementi di disturbo…" TextColor="White" VerticalOptions="Center" />
+                <Label Text="{Binding AiStatusText}" TextColor="White" VerticalOptions="Center" />
             </HorizontalStackLayout>
             <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="12">
                 <Button Text="Riscatta" Style="{StaticResource SecondaryButton}" TextColor="White" BorderColor="White"

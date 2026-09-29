@@ -51,6 +51,7 @@ public partial class CameraViewModel(
     [ObservableProperty] public partial bool IsReviewing { get; set; }
     [ObservableProperty] public partial bool IsProcessing { get; set; }
     [ObservableProperty] public partial bool IsCheckingAi { get; set; }
+    [ObservableProperty] public partial string AiStatusText { get; set; } = "";
     [ObservableProperty] public partial ImageSource? ReviewImage { get; set; }
     [ObservableProperty] public partial string ReviewVerdict { get; set; } = "";
     [ObservableProperty] public partial Color ReviewVerdictColor { get; set; } = Color.FromArgb("#3DBE63");
@@ -218,7 +219,14 @@ public partial class CameraViewModel(
         var shot = Pending;
         try
         {
-            await photos.CheckDistractorsAsync(shot, _aiCts.Token);
+            // Prima il modello sul telefono (risposta immediata), poi l'analisi nel cloud se attiva.
+            AiStatusText = "Cerco elementi di disturbo sul telefono…";
+            if (await photos.CheckOnDeviceAsync(shot, _aiCts.Token) && ReferenceEquals(shot, Pending)) RebuildReview();
+            if (settings.UseCloudDetection)
+            {
+                AiStatusText = "Analisi approfondita nel cloud…";
+                await photos.CheckDistractorsAsync(shot, _aiCts.Token);
+            }
             if (ReferenceEquals(shot, Pending)) RebuildReview();
         }
         catch (OperationCanceledException)

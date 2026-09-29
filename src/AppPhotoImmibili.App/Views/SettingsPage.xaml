@@ -37,19 +37,51 @@
                 <Switch Grid.Column="1" IsToggled="{Binding AutoTone}" />
             </Grid>
             <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Affina con le linee verticali della foto" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding RefineWithLines}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
                 <Label Text="Includi originali nell'esportazione" VerticalOptions="Center" />
                 <Switch Grid.Column="1" IsToggled="{Binding IncludeOriginals}" />
             </Grid>
 
             <Label Text="Controllo oggetti di disturbo (AI)" Style="{StaticResource SectionHeader}" />
             <Grid ColumnDefinitions="*,Auto">
-                <Label Text="Analizza ogni scatto con Claude" VerticalOptions="Center" />
+                <Label Text="Controlla ogni scatto" VerticalOptions="Center" />
                 <Switch Grid.Column="1" IsToggled="{Binding CheckDistractors}" />
             </Grid>
+            <Picker Title="Dove eseguire il controllo" ItemsSource="{Binding DistractorModes}" SelectedItem="{Binding SelectedDistractorMode}" />
+
+            <Label Text="Sul telefono (ONNX Runtime)" FontAttributes="Bold" Margin="0,6,0,0" />
+            <Label Text="{Binding ModelText}" Style="{StaticResource Muted}" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button Text="Importa modello .onnx" Style="{StaticResource SecondaryButton}" Command="{Binding ImportModelCommand}" />
+                <Button Grid.Column="1" Text="Rimuovi" Style="{StaticResource SecondaryButton}" Command="{Binding RemoveModelCommand}"
+                        IsEnabled="{Binding HasModel}" />
+            </Grid>
+            <Label Style="{StaticResource Muted}"
+                   Text="Modelli YOLOv8/YOLO11 esportati in ONNX. Un modello COCO riconosce persone, animali, bottiglie, stoviglie, borse; per tavoletta alzata, cavi e disordine serve un modello addestrato sulle foto immobiliari." />
+
+            <Label Text="Nel cloud (Claude)" FontAttributes="Bold" Margin="0,6,0,0" />
             <Entry Placeholder="Chiave API Anthropic" Text="{Binding ApiKey}" IsPassword="True" />
             <Entry Placeholder="Endpoint proxy aziendale (facoltativo)" Text="{Binding ApiBaseUrl}" Keyboard="Url" />
             <Label Style="{StaticResource Muted}"
                    Text="La foto viene ridotta e inviata solo per questo controllo. In produzione si consiglia un proxy dell'agenzia che custodisca la chiave." />
+
+            <Label Text="Caricamento sul gestionale" Style="{StaticResource SectionHeader}" />
+            <Entry Placeholder="Nome dell'agente (scritto nei metadati)" Text="{Binding AgentName}" />
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Carica le foto in secondo piano" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding SyncEnabled}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Solo con Wi-Fi" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding SyncWifiOnly}" />
+            </Grid>
+            <Entry Placeholder="https://gestionale.agenzia.it/api" Text="{Binding AgencyBaseUrl}" Keyboard="Url" />
+            <Entry Placeholder="Token di accesso" Text="{Binding AgencyToken}" IsPassword="True" />
+            <Label Text="{Binding SyncStatus}" Style="{StaticResource Muted}" />
+            <Button Text="Carica ora / riprova errori" Style="{StaticResource SecondaryButton}" Command="{Binding SyncNowCommand}" />
 
             <Button Text="Salva" Command="{Binding SaveCommand}" Margin="0,12,0,0" />
         </VerticalStackLayout>

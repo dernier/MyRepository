@@ -10,7 +10,7 @@
         <ToolbarItem Text="+ Nuovo" Command="{Binding NewCommand}" />
     </ContentPage.ToolbarItems>
 
-    <Grid RowDefinitions="*,Auto" Padding="16,12">
+    <Grid RowDefinitions="*,Auto,Auto" Padding="16,12">
         <RefreshView Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
             <CollectionView ItemsSource="{Binding Items}" SelectionMode="None">
                 <CollectionView.EmptyView>
@@ -48,6 +48,8 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
-        <Button Grid.Row="1" Text="Nuovo immobile" Command="{Binding NewCommand}" Margin="0,8,0,0" />
+        <Label Grid.Row="1" Text="{Binding SyncText}" Style="{StaticResource Muted}" HorizontalTextAlignment="Center"
+               IsVisible="{Binding SyncText, Converter={StaticResource IsNotEmpty}}" />
+        <Button Grid.Row="2" Text="Nuovo immobile" Command="{Binding NewCommand}" Margin="0,8,0,0" />
     </Grid>
 </ContentPage>
