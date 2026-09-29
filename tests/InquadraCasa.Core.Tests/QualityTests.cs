@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using InquadraCasa.Core.Analysis;
 using InquadraCasa.Core.Imaging;
 using SkiaSharp;

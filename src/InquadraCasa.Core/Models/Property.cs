@@ -1,3 +1,4 @@
+using System;
 using SQLite;
 
 namespace InquadraCasa.Core.Models;

@@ -1,3 +1,5 @@
+using System;
+
 namespace InquadraCasa.Core.Models;
 
 /// <summary>Tipologia di ambiente: guida il numero di scatti e i consigli.</summary>

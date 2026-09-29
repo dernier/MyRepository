@@ -1,9 +1,17 @@
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using InquadraCasa.Core.Ai;
 using InquadraCasa.Core.Analysis;
 using InquadraCasa.Core.Catalog;
 using InquadraCasa.Core.Data;
 using InquadraCasa.Core.Imaging;
 using InquadraCasa.Core.Models;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Networking;
+using Microsoft.Maui.Storage;
 using SkiaSharp;
 
 namespace InquadraCasa.App.Services;

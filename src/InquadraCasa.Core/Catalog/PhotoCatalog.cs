@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using InquadraCasa.Core.Models;
 
 namespace InquadraCasa.Core.Catalog;

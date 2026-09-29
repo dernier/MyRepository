@@ -1,3 +1,8 @@
+using System;
+using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
+
 namespace InquadraCasa.App.Services;
 
 /// <summary>Impostazioni dell'app. La chiave API resta nello storage sicuro del sistema operativo.</summary>

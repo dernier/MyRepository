@@ -1,4 +1,7 @@
+using System;
 using Foundation;
+using Microsoft.Maui;
+using Microsoft.Maui.Hosting;
 
 namespace InquadraCasa.App;
 

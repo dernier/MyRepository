@@ -1,10 +1,16 @@
+using System;
+using System.IO;
 using CommunityToolkit.Maui;
 using InquadraCasa.App.Services;
 using InquadraCasa.App.ViewModels;
 using InquadraCasa.App.Views;
 using InquadraCasa.Core.Catalog;
 using InquadraCasa.Core.Data;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
+using Microsoft.Maui.Storage;
 
 namespace InquadraCasa.App;
 

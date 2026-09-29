@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using InquadraCasa.Core.Models;
 
 namespace InquadraCasa.Core.Checklist;

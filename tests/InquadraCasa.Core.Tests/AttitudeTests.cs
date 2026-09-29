@@ -1,3 +1,4 @@
+using System;
 using InquadraCasa.Core.Analysis;
 
 namespace InquadraCasa.Core.Tests;

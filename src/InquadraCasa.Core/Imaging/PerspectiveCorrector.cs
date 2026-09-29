@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using SkiaSharp;
 
 namespace InquadraCasa.Core.Imaging;

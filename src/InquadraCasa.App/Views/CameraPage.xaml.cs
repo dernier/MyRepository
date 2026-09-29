@@ -1,6 +1,14 @@
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using CommunityToolkit.Maui.Core;
 using InquadraCasa.App.ViewModels;
 using InquadraCasa.Core.Analysis;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Devices;
 
 namespace InquadraCasa.App.Views;
 

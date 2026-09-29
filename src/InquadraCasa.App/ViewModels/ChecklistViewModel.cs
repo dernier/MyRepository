@@ -1,4 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using InquadraCasa.App.Services;
@@ -6,6 +11,10 @@ using InquadraCasa.Core.Catalog;
 using InquadraCasa.Core.Checklist;
 using InquadraCasa.Core.Data;
 using InquadraCasa.Core.Models;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Storage;
 
 namespace InquadraCasa.App.ViewModels;
 

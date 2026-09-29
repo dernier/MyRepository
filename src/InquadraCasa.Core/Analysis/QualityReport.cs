@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using InquadraCasa.Core.Ai;
 
 namespace InquadraCasa.Core.Analysis;

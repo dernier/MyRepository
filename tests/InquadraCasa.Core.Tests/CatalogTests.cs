@@ -1,4 +1,8 @@
+using System;
+using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Threading.Tasks;
 using InquadraCasa.Core.Ai;
 using InquadraCasa.Core.Catalog;
 using InquadraCasa.Core.Checklist;

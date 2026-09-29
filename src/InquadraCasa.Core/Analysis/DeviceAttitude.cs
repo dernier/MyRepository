@@ -1,3 +1,5 @@
+using System;
+
 namespace InquadraCasa.Core.Analysis;
 
 /// <summary>Orientamento dell'interfaccia dedotto dalla gravità.</summary>

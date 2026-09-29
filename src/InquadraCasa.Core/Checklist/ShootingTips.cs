@@ -1,3 +1,4 @@
+using System;
 using InquadraCasa.Core.Models;
 
 namespace InquadraCasa.Core.Checklist;

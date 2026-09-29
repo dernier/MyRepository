@@ -1,4 +1,7 @@
+using System;
+using System.Linq;
 using InquadraCasa.Core.Analysis;
+using Microsoft.Maui.Graphics;
 
 namespace InquadraCasa.App.Controls;
 

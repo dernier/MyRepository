@@ -1,3 +1,5 @@
+using System;
+
 namespace InquadraCasa.Core.Imaging;
 
 /// <summary>Immagine in scala di grigi (luminanza 0–255) per le analisi.</summary>

@@ -1,4 +1,6 @@
+using System;
 using InquadraCasa.App.ViewModels;
+using Microsoft.Maui.Controls;
 
 namespace InquadraCasa.App.Views;
 
