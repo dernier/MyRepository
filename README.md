@@ -143,8 +143,9 @@ dotnet build src/AppPhotoImmibili.App -t:Run -f net10.0-ios        # da macOS
 dotnet build src/AppPhotoImmibili.App -p:TypeCheck=true            # solo controllo di compilazione, senza SDK mobili
 ```
 
-La GitHub Action `CI` esegue i test, produce l'APK Android come artefatto e compila l'app per il
-simulatore iOS.
+La GitHub Action `CI` esegue i test, produce l'APK Android come artefatto e verifica che il codice iOS
+compili (solo compilazione C#: i runner di GitHub non hanno ancora l'Xcode 27 richiesto da .NET per iOS 27,
+quindi il pacchetto iOS si crea da un Mac aggiornato).
 
 ## Configurazione
 
