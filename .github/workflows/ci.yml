@@ -41,8 +41,8 @@ jobs:
 
   ios:
     # Compilazione per il simulatore: verifica il codice iOS senza certificati di firma.
-    # I runner hanno Xcode 26.x mentre .NET per iOS 27 chiede Xcode 27: il controllo di versione è disattivato,
-    # sufficiente per verificare la compilazione (per pubblicare serve l'Xcode richiesto).
+    # I runner hanno Xcode 26.x mentre .NET per iOS 27 chiede Xcode 27: si esegue solo la compilazione C#
+    # (target Compile, senza linker nativo). Per creare il pacchetto serve un Mac con l'Xcode richiesto.
     runs-on: macos-26
     needs: test
     steps:
@@ -55,5 +55,5 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Installa workload MAUI iOS
         run: dotnet workload install maui-ios
-      - name: Compila per il simulatore iOS
-        run: dotnet build src/AppPhotoImmibili.App -c Debug -p:MobilePlatform=ios -p:ValidateXcodeVersion=false
+      - name: Compila il codice iOS
+        run: dotnet build src/AppPhotoImmibili.App -c Debug -t:Compile -p:MobilePlatform=ios -p:ValidateXcodeVersion=false
