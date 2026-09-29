@@ -14,9 +14,9 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Test della libreria core
-        run: dotnet test tests/InquadraCasa.Core.Tests --configuration Release
+        run: dotnet test tests/AppPhotoImmibili.Core.Tests --configuration Release
       - name: Controllo di compilazione dell'app (codice condiviso e XAML)
-        run: dotnet build src/InquadraCasa.App -p:TypeCheck=true --configuration Release
+        run: dotnet build src/AppPhotoImmibili.App -p:TypeCheck=true --configuration Release
 
   android:
     runs-on: ubuntu-latest
@@ -33,8 +33,8 @@ jobs:
       - name: Installa workload MAUI Android
         run: dotnet workload install maui-android
       - name: Compila APK
-        run: dotnet publish src/InquadraCasa.App -f net10.0-android -c Release -p:AndroidPackageFormat=apk
+        run: dotnet publish src/AppPhotoImmibili.App -f net10.0-android -c Release -p:AndroidPackageFormat=apk
       - uses: actions/upload-artifact@v4
         with:
-          name: inquadracasa-android
-          path: src/InquadraCasa.App/bin/Release/net10.0-android/publish/*-Signed.apk
+          name: appphotoimmibili-android
+          path: src/AppPhotoImmibili.App/bin/Release/net10.0-android/publish/*-Signed.apk

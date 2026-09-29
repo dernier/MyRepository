@@ -1,4 +1,4 @@
-# InquadraCasa
+# AppPhotoImmibili
 
 App per smartphone (.NET MAUI, Android e iOS) che guida gli agenti immobiliari a fotografare
 correttamente gli interni: in bolla, alla giusta altezza, con le inquadrature giuste, senza
@@ -44,10 +44,10 @@ La schermata di revisione mostra l'esito e consiglia se **riscattare prima di ca
 ## Struttura
 
 ```
-src/InquadraCasa.Core        Logica senza dipendenze da MAUI (testabile): assetto, altezza, nitidezza,
+src/AppPhotoImmibili.Core        Logica senza dipendenze da MAUI (testabile): assetto, altezza, nitidezza,
                              esposizione, correzioni, catalogo, esportazione, SQLite, client Claude
-src/InquadraCasa.App         App .NET MAUI: fotocamera (CommunityToolkit CameraView), overlay, pagine MVVM
-tests/InquadraCasa.Core.Tests Test xUnit
+src/AppPhotoImmibili.App         App .NET MAUI: fotocamera (CommunityToolkit CameraView), overlay, pagine MVVM
+tests/AppPhotoImmibili.Core.Tests Test xUnit
 ```
 
 ## Compilare ed eseguire
@@ -56,10 +56,10 @@ Requisiti: .NET 10 SDK e workload MAUI (`dotnet workload install maui-android ma
 Android SDK (installato da Visual Studio o Android Studio); per iOS un Mac con Xcode.
 
 ```bash
-dotnet test tests/InquadraCasa.Core.Tests                      # test della logica
-dotnet build src/InquadraCasa.App -t:Run -f net10.0-android    # avvio su telefono/emulatore Android
-dotnet build src/InquadraCasa.App -t:Run -f net10.0-ios        # da macOS
-dotnet build src/InquadraCasa.App -p:TypeCheck=true            # solo controllo di compilazione, senza SDK mobili
+dotnet test tests/AppPhotoImmibili.Core.Tests                      # test della logica
+dotnet build src/AppPhotoImmibili.App -t:Run -f net10.0-android    # avvio su telefono/emulatore Android
+dotnet build src/AppPhotoImmibili.App -t:Run -f net10.0-ios        # da macOS
+dotnet build src/AppPhotoImmibili.App -p:TypeCheck=true            # solo controllo di compilazione, senza SDK mobili
 ```
 
 La GitHub Action `CI` esegue i test e produce l'APK Android come artefatto.

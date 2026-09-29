@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:vm="clr-namespace:AppPhotoImmibili.App.ViewModels"
+             x:Class="AppPhotoImmibili.App.Views.CameraPage"
+             x:DataType="vm:CameraViewModel"
+             Title="{Binding Title}"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="Black">
+
+    <Grid>
+        <toolkit:CameraView x:Name="Camera" />
+
+        <GraphicsView x:Name="OverlayView" InputTransparent="True" />
+
+        <!-- Barra superiore: ambiente, livella, altezza -->
+        <VerticalStackLayout Padding="12,36,12,0" Spacing="8" VerticalOptions="Start">
+            <HorizontalStackLayout Spacing="8">
+                <Border Style="{StaticResource Chip}">
+                    <Label Style="{StaticResource ChipLabel}" Text="{Binding Title}" />
+                </Border>
+                <Border Style="{StaticResource Chip}">
+                    <Label Style="{StaticResource ChipLabel}" Text="{Binding ShotText}" />
+                </Border>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Spacing="8">
+                <Border Style="{StaticResource Chip}" BackgroundColor="{Binding LevelColor}">
+                    <Label Style="{StaticResource ChipLabel}" Text="{Binding LevelText}" />
+                </Border>
+                <Border Style="{StaticResource Chip}" BackgroundColor="{Binding HeightColor}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding CalibrateHeightCommand}" />
+                    </Border.GestureRecognizers>
+                    <Label Style="{StaticResource ChipLabel}" Text="{Binding HeightText}" />
+                </Border>
+            </HorizontalStackLayout>
+            <Label Text="{Binding OrientationHint}" TextColor="#F2A541" FontAttributes="Bold" FontSize="15"
+                   IsVisible="{Binding OrientationHint, Converter={StaticResource IsNotEmpty}}" />
+            <Border Style="{StaticResource Chip}" IsVisible="{Binding ShowTip}" MaximumWidthRequest="520" HorizontalOptions="Start">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding HideTipCommand}" />
+                </Border.GestureRecognizers>
+                <Label TextColor="White" FontSize="13">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding TipText}" />
+                            <Span Text="  (tocca per chiudere)" TextColor="#BBBBBB" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </Border>
+            <Label Text="{Binding StatusText}" TextColor="White" FontAttributes="Bold"
+                   IsVisible="{Binding StatusText, Converter={StaticResource IsNotEmpty}}" />
+        </VerticalStackLayout>
+
+        <!-- Comandi -->
+        <Grid VerticalOptions="End" Padding="16,0,16,28" ColumnDefinitions="*,Auto,*">
+            <Button Grid.Column="0" Text="{Binding MaskText}" HorizontalOptions="Start" VerticalOptions="Center"
+                    BackgroundColor="{StaticResource OverlayBackground}" FontSize="13"
+                    Command="{Binding ToggleMaskCommand}" />
+            <Border Grid.Column="1" x:Name="Shutter" WidthRequest="78" HeightRequest="78"
+                    StrokeShape="Ellipse" StrokeThickness="5" Stroke="White"
+                    BackgroundColor="{Binding LevelColor}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnShutterTapped" />
+                </Border.GestureRecognizers>
+            </Border>
+            <Button Grid.Column="2" Text="Chiudi" HorizontalOptions="End" VerticalOptions="Center"
+                    BackgroundColor="{StaticResource OverlayBackground}" FontSize="13"
+                    Clicked="OnCloseClicked" />
+        </Grid>
+
+        <ActivityIndicator IsRunning="{Binding IsProcessing}" IsVisible="{Binding IsProcessing}"
+                           Color="White" WidthRequest="56" HeightRequest="56" />
+
+        <!-- Revisione post-scatto -->
+        <Grid IsVisible="{Binding IsReviewing}" BackgroundColor="#E6000000" Padding="16,36,16,20"
+              RowDefinitions="Auto,*,Auto,Auto" RowSpacing="10">
+            <Label Text="{Binding ReviewVerdict}" TextColor="{Binding ReviewVerdictColor}" FontSize="18" FontAttributes="Bold" />
+            <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Image Source="{Binding ReviewImage}" Aspect="AspectFit" />
+                <ScrollView Grid.Column="1">
+                    <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding ReviewMessages}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ReviewMessage">
+                                <Grid ColumnDefinitions="24,*">
+                                    <Label Text="{Binding Icon}" TextColor="{Binding Color}" FontAttributes="Bold" FontSize="16" />
+                                    <Label Grid.Column="1" Text="{Binding Text}" TextColor="White" FontSize="14" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Grid>
+            <HorizontalStackLayout Grid.Row="2" Spacing="8" IsVisible="{Binding IsCheckingAi}">
+                <ActivityIndicator IsRunning="{Binding IsCheckingAi}" Color="White" HeightRequest="20" WidthRequest="20" />
+                <Label Text="Cerco elementi di disturbo…" TextColor="White" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+            <Grid Grid.Row="3" ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Button Text="Riscatta" Style="{StaticResource SecondaryButton}" TextColor="White" BorderColor="White"
+                        Command="{Binding RetakeCommand}" />
+                <Button Grid.Column="1" Text="Conferma e salva" Command="{Binding ConfirmCommand}"
+                        BackgroundColor="{StaticResource Ok}" />
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>

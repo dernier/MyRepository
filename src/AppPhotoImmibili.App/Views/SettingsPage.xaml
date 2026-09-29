@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AppPhotoImmibili.App.ViewModels"
+             x:Class="AppPhotoImmibili.App.Views.SettingsPage"
+             x:DataType="vm:SettingsViewModel"
+             Title="Impostazioni">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="6">
+            <Label Text="Inquadratura" Style="{StaticResource SectionHeader}" />
+            <Label Text="{Binding ToleranceText}" />
+            <Slider Minimum="0.3" Maximum="3" Value="{Binding Tolerance}" />
+            <Label Text="{Binding HeightText}" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Slider Minimum="90" Maximum="170" Value="{Binding HeightMin}" />
+                <Slider Grid.Column="1" Minimum="90" Maximum="170" Value="{Binding HeightMax}" />
+            </Grid>
+            <Picker Title="Obiettivo di riferimento" ItemsSource="{Binding Lenses}" SelectedItem="{Binding SelectedLens}" />
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Usa l'obiettivo più grandangolare" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding UseWidestLens}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Mostra maschera tre pareti" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding ShowCornerMask}" />
+            </Grid>
+            <Button Text="Calibra livella" Style="{StaticResource SecondaryButton}" Command="{Binding CalibrateCommand}" />
+            <Label Text="{Binding CalibrationText}" Style="{StaticResource Muted}" />
+
+            <Label Text="Post-produzione" Style="{StaticResource SectionHeader}" />
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Raddrizza verticali e orizzonte" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding AutoPerspective}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Bilancia luminosità e colori" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding AutoTone}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Includi originali nell'esportazione" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding IncludeOriginals}" />
+            </Grid>
+
+            <Label Text="Controllo oggetti di disturbo (AI)" Style="{StaticResource SectionHeader}" />
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Analizza ogni scatto con Claude" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding CheckDistractors}" />
+            </Grid>
+            <Entry Placeholder="Chiave API Anthropic" Text="{Binding ApiKey}" IsPassword="True" />
+            <Entry Placeholder="Endpoint proxy aziendale (facoltativo)" Text="{Binding ApiBaseUrl}" Keyboard="Url" />
+            <Label Style="{StaticResource Muted}"
+                   Text="La foto viene ridotta e inviata solo per questo controllo. In produzione si consiglia un proxy dell'agenzia che custodisca la chiave." />
+
+            <Button Text="Salva" Command="{Binding SaveCommand}" Margin="0,12,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
