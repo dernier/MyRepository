@@ -39,3 +39,12 @@ public enum Severity
     Media,
     Alta,
 }
+
+public enum SyncState
+{
+    /// <summary>Da caricare (anche dopo un errore temporaneo, con attesa crescente).</summary>
+    InCoda,
+    Caricata,
+    /// <summary>Rifiutata dal server (es. token non valido): serve un intervento, poi "Riprova".</summary>
+    Errore,
+}

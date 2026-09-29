@@ -171,5 +171,34 @@ public sealed class PropertyRepository
     public async Task<RoomProgress?> NextIncompleteRoomAsync(int propertyId) =>
         (await GetProgressAsync(propertyId)).FirstOrDefault(p => !p.IsComplete);
 
+    /// <summary>Foto da caricare ora: in coda e con l'eventuale attesa dopo un errore già trascorsa.</summary>
+    public async Task<List<Photo>> GetPhotosToSyncAsync(DateTime nowUtc, int limit = 20)
+    {
+        await InitAsync();
+        return await _db.Table<Photo>()
+            .Where(p => p.SyncState == SyncState.InCoda && (p.NextSyncAttemptAt == null || p.NextSyncAttemptAt <= nowUtc))
+            .OrderBy(p => p.CapturedAt)
+            .Take(limit)
+            .ToListAsync();
+    }
+
+    public async Task<(int Queued, int Uploaded, int Failed)> GetSyncSummaryAsync()
+    {
+        await InitAsync();
+        var queued = await _db.Table<Photo>().Where(p => p.SyncState == SyncState.InCoda).CountAsync();
+        var uploaded = await _db.Table<Photo>().Where(p => p.SyncState == SyncState.Caricata).CountAsync();
+        var failed = await _db.Table<Photo>().Where(p => p.SyncState == SyncState.Errore).CountAsync();
+        return (queued, uploaded, failed);
+    }
+
+    /// <summary>Rimette in coda le foto in errore e annulla le attese (dopo aver corretto le impostazioni).</summary>
+    public async Task<int> RetrySyncAsync()
+    {
+        await InitAsync();
+        return await _db.ExecuteAsync(
+            "UPDATE photos SET SyncState = ?, NextSyncAttemptAt = NULL, SyncError = '' WHERE SyncState <> ?",
+            SyncState.InCoda, SyncState.Caricata);
+    }
+
     public Task CloseAsync() => _db.CloseAsync();
 }

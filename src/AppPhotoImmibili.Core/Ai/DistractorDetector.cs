@@ -22,6 +22,16 @@ public sealed record DistractorReport(
 {
     public static DistractorReport Empty { get; } = new([], "");
     public bool HasBlocking => Items.Any(i => i.Severity >= Severity.Media);
+
+    /// <summary>Unisce il controllo sul telefono e quello nel cloud; il giudizio del cloud, più completo, prevale.</summary>
+    public static DistractorReport? Merge(DistractorReport? onDevice, DistractorReport? cloud)
+    {
+        if (onDevice is null) return cloud;
+        if (cloud is null) return onDevice;
+        var items = cloud.Items.Concat(onDevice.Items.Where(l =>
+            !cloud.Items.Any(c => c.Item.Contains(l.Item.Split(' ')[0], StringComparison.OrdinalIgnoreCase)))).ToList();
+        return new DistractorReport(items, string.IsNullOrWhiteSpace(cloud.Summary) ? onDevice.Summary : cloud.Summary);
+    }
 }
 
 public sealed class DistractorDetectorOptions

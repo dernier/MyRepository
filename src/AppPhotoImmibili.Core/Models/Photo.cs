@@ -9,6 +9,10 @@ public class Photo
     [PrimaryKey, AutoIncrement]
     public int Id { get; set; }
 
+    /// <summary>Identificativo globale: chiave di idempotenza per il caricamento sul server dell'agenzia.</summary>
+    [Indexed]
+    public string Uid { get; set; } = Guid.NewGuid().ToString("N");
+
     [Indexed]
     public int PropertyId { get; set; }
 
@@ -46,4 +50,14 @@ public class Photo
     public string DistractorsJson { get; set; } = "";
     public bool PerspectiveCorrected { get; set; }
     public bool ToneCorrected { get; set; }
+    /// <summary>Vero se la correzione prospettica usa l'assetto stimato dalle linee verticali.</summary>
+    public bool CorrectedFromLines { get; set; }
+
+    // Sincronizzazione con il server dell'agenzia
+    [Indexed]
+    public SyncState SyncState { get; set; } = SyncState.InCoda;
+    public int SyncAttempts { get; set; }
+    public DateTime? NextSyncAttemptAt { get; set; }
+    public DateTime? UploadedAt { get; set; }
+    public string SyncError { get; set; } = "";
 }
